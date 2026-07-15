@@ -1,6 +1,9 @@
 import express from 'express';
 import userC from '../controllers/userC.js'; // standardized import
 import { authenicator } from '../middleware/authenicator.js';
+import validate from '../middleware/validate.js';
+import { createUserSchema, signinSchema, verifyOtpSchema, castVoteSchema, editProfileSchema } from '../validation/schemas.js';
+import { authLimiter, voteLimiter } from '../config/rateLimits.js';
 
 const router = express.Router();
 
@@ -63,7 +66,7 @@ const router = express.Router();
  *       500:
  *         description: Server error
  */
-router.post("/account/create", userC.createUser);
+router.post("/account/create", authLimiter, validate(createUserSchema), userC.createUser);
 
 /**
  * @swagger
@@ -72,7 +75,7 @@ router.post("/account/create", userC.createUser);
  *     summary: Verify Account (Registration Step 2)
  *     tags: [User]
  */
-router.post('/account/verify', userC.verifyAccount);
+router.post('/account/verify', validate(verifyOtpSchema), userC.verifyAccount);
 
 /**
  * @swagger
@@ -81,7 +84,7 @@ router.post('/account/verify', userC.verifyAccount);
  *     summary: Sign in an existing user
  *     tags: [User]
  */
-router.post('/account/signin', userC.signinUser);
+router.post('/account/signin', authLimiter, validate(signinSchema), userC.signinUser);
 
 /**
  * @swagger
@@ -101,7 +104,7 @@ router.get('/voting/history/', authenicator, userC.votingHistory);
  *     summary: Cast a vote for a candidate
  *     tags: [User]
  */
-router.post('/cast/vote', authenicator, userC.castVote);
+router.post('/cast/vote', authenicator, voteLimiter, validate(castVoteSchema), userC.castVote);
 
 /**
  * @swagger
@@ -110,6 +113,6 @@ router.post('/cast/vote', authenicator, userC.castVote);
  *     summary: Edit user profile
  *     tags: [User]
  */
-router.post('/EditProfile', authenicator, userC.EditProfile);
+router.post('/EditProfile', authenicator, validate(editProfileSchema), userC.EditProfile);
 
 export default router;

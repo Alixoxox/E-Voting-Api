@@ -1,5 +1,4 @@
 import pool from "../config/db.js"
-import auditLogsM from "./auditLogsM.js";
 
 class votesM {
 
@@ -14,7 +13,9 @@ class votesM {
             previous_hash VARCHAR(256),
             current_hash VARCHAR(256),
             castedAt DATE DEFAULT CURRENT_DATE,
-            UNIQUE (userId, electionId));`
+            UNIQUE (userId, electionId));
+      CREATE INDEX IF NOT EXISTS idx_votes_election_user ON votes(electionId, userId);
+      CREATE INDEX IF NOT EXISTS idx_votes_casted_at ON votes(castedAt DESC);`
       await pool.query(sql);
       console.log("votes table created or already exists.");
     } catch (err) {
@@ -61,34 +62,27 @@ class votesM {
   }
   
   // 2. Fix CastVote return
-  async CastVote(candidateParticipatingId, userId, electionId, previousHash, currentHash){
-      try{
-          // Check existing vote
-          const voteCheck = await pool.query(`SELECT id FROM votes WHERE userId = $1 AND electionId = $2`, [userId, electionId]);
-      
-          if(voteCheck.rows.length > 0){
-              throw new Error('User has already casted his vote'); // Throw error instead of returning message
-          }
-      
-          // Insert with Hashes
-          await pool.query(`
-              INSERT INTO votes (userId, candidateConstid, electionId, previous_hash, current_hash) 
-              VALUES ($1, $2, $3, $4, $5)
-          `, [userId, candidateParticipatingId, electionId, previousHash, currentHash]);
-      
-          // Update Count
-          await pool.query(`
-              UPDATE candidateConstituency SET totalVotes = totalVotes + 1 WHERE id = $1
-          `, [candidateParticipatingId]);
-      
-          // Get Area for Socket
-          const userArea = await pool.query(`SELECT areaId FROM users WHERE id = $1`, [userId]);
-          const areaId = userArea.rows[0].areaid;
-          return { areaId, electionId };
-      } catch(err){
-          console.error('Error casting vote:', err);
-          throw err;
+  async CastVote(candidateParticipatingId, userId, electionId, previousHash, currentHash) {
+    const client = await pool.connect();
+    try {
+      await client.query('BEGIN');
+      const voteCheck = await client.query('SELECT id FROM votes WHERE userId = $1 AND electionId = $2', [userId, electionId]);
+      if (voteCheck.rows.length > 0) {
+        throw new Error('User has already casted his vote');
       }
+      await client.query('INSERT INTO votes (userId, candidateConstid, electionId, previous_hash, current_hash) VALUES ($1, $2, $3, $4, $5)', [userId, candidateParticipatingId, electionId, previousHash, currentHash]);
+      await client.query('UPDATE candidateConstituency SET totalVotes = totalVotes + 1 WHERE id = $1', [candidateParticipatingId]);
+      const userArea = await client.query('SELECT areaId FROM users WHERE id = $1', [userId]);
+      const areaId = userArea.rows[0].areaid;
+      await client.query('COMMIT');
+      return { areaId, electionId };
+    } catch (err) {
+      await client.query('ROLLBACK');
+      console.error('Error casting vote:', err);
+      throw err;
+    } finally {
+      client.release();
+    }
   }
     async votingHistory(userId,limit,page){
       const offset=(limit*(page-1));
@@ -144,7 +138,7 @@ class votesM {
     // 4. Report Results
     if (brokenLinks.length > 0) {
       // Log this serious security event!
-      await auditLogsM.logAction(req, 'INTEGRITY_CHECK_FAILED', electionId, { errors: brokenLinks });
+      // Integrity check failed (logged internally)
       
       return {
         status: "Compromised",

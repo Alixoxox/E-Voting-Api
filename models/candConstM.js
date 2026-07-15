@@ -10,7 +10,10 @@ class candConstM {
             approvalStatus VARCHAR(20) CHECK (approvalStatus IN ('Pending', 'Won' , 'Lost')) DEFAULT 'Pending',
             constituencyId INTEGER REFERENCES Constituency(id),
             electionId INTEGER REFERENCES elections(id),
-            UNIQUE(candidateId, constituencyId,electionId));`;
+            UNIQUE(candidateId, constituencyId,electionId));
+      CREATE INDEX IF NOT EXISTS idx_cand_const_election_const ON candidateConstituency(electionId, constituencyId);
+      CREATE INDEX IF NOT EXISTS idx_cand_const_constituency ON candidateConstituency(constituencyId);
+      CREATE INDEX IF NOT EXISTS idx_cand_const_leaderboard ON candidateConstituency(electionId, totalVotes DESC);`;
       await db.query(sql);
       console.log("candidateConstituency table created or already exists.");
     } catch (err) {

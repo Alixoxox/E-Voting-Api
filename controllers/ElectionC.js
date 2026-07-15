@@ -2,7 +2,6 @@ import auditLogsM from "../models/auditLogsM.js";
 import ElectionM from "../models/ElectionM.js";
 import votesM from "../models/votesM.js";
 import db from "../config/db.js"; // Ensure this import exists for getPastResults
-import { redisClient } from "../server.js";
 
 class ElectionC {
   getElections = async (req, res) => {

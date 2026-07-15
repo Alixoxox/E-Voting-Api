@@ -3,7 +3,6 @@ import bcrypt from 'bcrypt';
 import { redisClient } from "../server.js";
 import crypto from 'crypto';
 import { sendOTP } from "../utils/emailservice.js";
-import auditLogsM from "./auditLogsM.js";
 class UserM {
   async createTable() {
     try {
@@ -19,7 +18,8 @@ class UserM {
       areaId INTEGER REFERENCES area(id),
       role VARCHAR(20) CHECK (role IN ('admin', 'user', 'candidate')) DEFAULT 'user',
       is_verified BOOLEAN DEFAULT FALSE,    
-      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);`
+      created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP);
+      CREATE INDEX IF NOT EXISTS idx_users_role ON users(role);`
       await pool.query(sql);
       console.log("Users table created or already exists.");
     } catch (err) {

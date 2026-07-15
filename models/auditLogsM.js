@@ -11,7 +11,9 @@ class audit_logsM{
               target_id VARCHAR(50),                    -- e.g. "Election_5" or "User_10"
               details TEXT,                             -- JSON details
               timestamp TIMESTAMP DEFAULT CURRENT_TIMESTAMP
-            );`
+            );
+            CREATE INDEX IF NOT EXISTS idx_audit_logs_actor ON audit_logs(actor_name);
+            CREATE INDEX IF NOT EXISTS idx_audit_logs_timestamp ON audit_logs(timestamp DESC);`
             await pool.query(sql);
             console.log('audit_logs table created or already exists.');
         }catch(err){

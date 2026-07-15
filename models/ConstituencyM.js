@@ -12,7 +12,8 @@ class ConstituencyM{
             name VARCHAR(100) NOT NULL UNIQUE,
             seatType VARCHAR(20) CHECK (seatType IN ('National','Provincial')) DEFAULT 'Provincial',
             status VARCHAR(20) CHECK (status IN ('Active', 'Inactive')) DEFAULT 'Active',
-            UNIQUE(name, code, seatType));`
+            UNIQUE(name, code, seatType));
+      CREATE INDEX IF NOT EXISTS idx_constituency_seat_type ON constituency(seatType);`
             await db.query(sql);
             console.log('Constituency table created or already exists.');
         }catch(err){

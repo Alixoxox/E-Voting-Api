@@ -3,6 +3,9 @@ import partyC from '../controllers/partyC.js'; // standardized import
 import CandidateC from '../controllers/candidateC.js';
 import candidateConstituencyC from '../controllers/candConstC.js';
 import { authenicator } from '../middleware/authenicator.js';
+import validate from '../middleware/validate.js';
+import { verifyOtpSchema, allocateCandidateSchema } from '../validation/schemas.js';
+import { authLimiter } from '../config/rateLimits.js';
 import { upload } from '../utils/imgUloader.js';
 
 const router = express.Router();
@@ -57,7 +60,7 @@ router.delete('/kick/candidate/:candidateId', authenicator, CandidateC.kickCandi
  *     summary: Create a new party account with image
  *     tags: [Parties]
  */
-router.post('/account/register', upload.single('image'), partyC.createParty);
+router.post('/account/register', authLimiter, upload.single('image'), partyC.createParty);
 
 /**
  * @swagger
@@ -66,7 +69,7 @@ router.post('/account/register', upload.single('image'), partyC.createParty);
  *     summary: Log Party account
  *     tags: [Parties]
  */
-router.post('/account/signin', partyC.LoginParty);
+router.post('/account/signin', authLimiter, partyC.LoginParty);
 
 /**
  * @swagger
@@ -75,7 +78,7 @@ router.post('/account/signin', partyC.LoginParty);
  *     summary: Verify Party account
  *     tags: [Parties]
  */
-router.post('/account/verify', partyC.verifyParty);
+router.post('/account/verify', validate(verifyOtpSchema), partyC.verifyParty);
 
 /**
  * @swagger
@@ -84,7 +87,7 @@ router.post('/account/verify', partyC.verifyParty);
  *     summary: Allocate Candidate Wrt Constituency Seat for Election
  *     tags: [Parties]
  */
-router.post('/candidate/fighting/constituency', authenicator, candidateConstituencyC.BookConstituencSeatForElectionForCandidate);
+router.post('/candidate/fighting/constituency', authenicator, validate(allocateCandidateSchema), candidateConstituencyC.BookConstituencSeatForElectionForCandidate);
 
 /**
  * @swagger

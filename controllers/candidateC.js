@@ -2,7 +2,6 @@ import candidateM from "../models/candidateM.js";
 import bcrypt from "bcrypt";
 import { redisClient } from "../server.js";
 import auditLogsM from "../models/auditLogsM.js";
-import pool from "../config/db.js";
 class CandiateC {
   getCandidates = async (req, res) => {
     try {

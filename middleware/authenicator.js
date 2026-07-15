@@ -20,15 +20,15 @@ export const authenicator = (req, res, next) => {
         const token = initialV(req); // now this throws if token is missing
         const decoded = jwt.decode(token);
         if (decoded?.exp < Math.floor(Date.now() / 1000)) {
-            return res.json({ message: "Session Expired. Please log in again." });
+            return res.status(401).json({ success: false, error: { message: "Invalid or expired token" } });
         }
         jwt.verify(token, SECRET_KEY, (err, user) => {
             if (err) {
                 console.log("JWT Verification Error:", err);
                 if (err.name === 'TokenExpiredError') {
-                    return res.status(401).json({ message: "Session Expired. Please log in again." });
+                    return res.status(401).json({ success: false, error: { message: "Session Expired. Please log in again." } });
                 }
-                return res.json({ message: "Invalid or expired token" });
+                return res.status(401).json({ success: false, error: { message: "Invalid or expired token" } });
             }
             req.user = user;
             next();

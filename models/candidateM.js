@@ -11,7 +11,9 @@ class candidateM{
             partyId INTEGER REFERENCES party(id),
             imageUrl VARCHAR(255) Not null,
             manifesto TEXT,
-            UNIQUE(userId, partyId));`
+            UNIQUE(userId, partyId));
+      CREATE INDEX IF NOT EXISTS idx_candidate_user ON candidate(userId);
+      CREATE INDEX IF NOT EXISTS idx_candidate_party ON candidate(partyId);`
             await db.query(sql);
             console.log('candidate table created or already exists.');
         }catch(err){

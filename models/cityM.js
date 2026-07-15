@@ -1,6 +1,5 @@
 import db from '../config/db.js';
 import format from 'pg-format';
-import auditLogsM from './auditLogsM.js';
 
 class cityM{
 

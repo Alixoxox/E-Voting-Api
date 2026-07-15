@@ -7,6 +7,9 @@ import ProvinceC from '../controllers/ProvinceC.js';
 import ConstituencyC from '../controllers/ConstituencyC.js';
 import Parties from '../controllers/partyC.js';
 import userC from '../controllers/userC.js';
+import validate from '../middleware/validate.js';
+import { forgotPasswordSchema, resetPasswordSchema } from '../validation/schemas.js';
+import { authLimiter } from '../config/rateLimits.js';
 import adminC from '../controllers/adminC.js';
 
 const router = express.Router();
@@ -59,10 +62,10 @@ router.get('/cities', cityC.getCities);
 router.get('/dashboard/stats', adminC.getDashboardStats);
 
 // Password Reset (Step 1)
-router.post('/password/forgot', userC.forgotPasswordRequest);
+router.post('/password/forgot', authLimiter, validate(forgotPasswordSchema), userC.forgotPasswordRequest);
 
 // Password Reset (Step 2)
-router.post('/password/reset', userC.resetPasswordWithOtp);
+router.post('/password/reset', authLimiter, validate(resetPasswordSchema), userC.resetPasswordWithOtp);
 
 // Elections
 router.get('/elections', ElectionC.getElections);
@@ -83,7 +86,7 @@ router.get('/area/constituency/:constituencyid', ConstituencyC.getAreaByConstitu
 router.get('/active/Elections', ElectionC.getActiveElections);
 
 // Resend OTP
-router.post('/resend/otp', userC.resendOtp);
+router.post('/resend/otp', authLimiter, userC.resendOtp);
 
 // Past Results
 router.get('/elections/past-results', ElectionC.getPastResults);

@@ -1,9 +1,9 @@
-import express from 'express';
+﻿import express from 'express';
 import dotenv from 'dotenv';
 import swaggerUi from 'swagger-ui-express';
 import swaggerJsdoc from 'swagger-jsdoc';
 import { swaggerOptions } from './utils/swagerConfig.js';
-import rateLimit from 'express-rate-limit';
+
 // Routes
 import cors from 'cors';
 import userRoutes from './routes/userR.js';
@@ -12,50 +12,53 @@ import partyRoutes from './routes/partyR.js';
 import publicRoutes from './routes/public.js';
 import userM from './models/userM.js';
 // DB initializer
+import errorHandler from './middleware/errorHandler.js';
 import { initTables } from './models/initializer.js';
+import { createAdapter } from '@socket.io/redis-adapter';
 import { createClient } from 'redis';
 
 dotenv.config();
-import { Server } from "socket.io";
-import http from "http";
+import { Server } from 'socket.io';
+import http from 'http';
 
 const app = express();
 const server = http.createServer(app);
-export let redisClient = createClient();
+export let redisClient = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6379' });
 redisClient.on('error', (err) => console.log('Redis Client Error', err));
 await redisClient.connect();
-export const io = new Server(server, { cors: { origin: "*" } });
+
+const pubClient = redisClient.duplicate();
+const subClient = redisClient.duplicate();
+
+const io = new Server(server, {
+  cors: { origin: process.env.SOCKET_CORS_ORIGIN || "*" }
+});
+export { io };
+io.adapter(createAdapter(pubClient, subClient));
+
 app.use(cors());
 
 // Pass `io` to routes if needed
-app.set("io", io);
 
-const limiter = rateLimit({
-  windowMs: 10 * 60 * 1000, // 10 minutes
-  max: 200,                 // 200 requests per IP
-  message: "Too many requests from this IP, please try again later.",
-  standardHeaders: true,
-  legacyHeaders: false,
-});
-app.use(limiter)
 app.use(express.json());
 app.use(express.text({ type: 'text/csv' }));
 
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 (async () => {
-  // 1️⃣ Initialize DB tables
+  // 1ï¸âƒ£ Initialize DB tables
   await initTables();
 
-  // 2️⃣ Swagger UI route (add BEFORE your API routes)
+  // 2ï¸âƒ£ Swagger UI route (add BEFORE your API routes)
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-  // 3️⃣ Register all API routes
+  // 3ï¸âƒ£ Register all API routes
   app.use('/api/public',publicRoutes );
   app.use('/api/users', userRoutes);
   app.use('/api/parties', partyRoutes);
   app.use('/api/admin',AdminRoutes);
-  // 4️⃣ Start server
+  app.use(errorHandler);
+  // 4ï¸âƒ£ Start server
   io.on("connection", (socket) => {
     console.log(" User connected:", socket.id);
   
@@ -78,7 +81,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
         }
         // Emit directly to this user (not broadcast)
         socket.emit("leaderboardUpdate", { leaderboard });
-        console.log(`📤 Sent initial leaderboard to ${socket.id}`);
+        console.log(`ðŸ“¤ Sent initial leaderboard to ${socket.id}`);
       } catch (err) {
         console.error("Error fetching leaderboard:", err.message);
       }
@@ -90,7 +93,9 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
   });
   server.listen(5000, () => {
     console.log(`  Server running on port 5000`);
-    console.log(`📚 Swagger docs: http://localhost:5000/api-docs`);
+    console.log(`ðŸ“š Swagger docs: http://localhost:5000/api-docs`);
   });
   
 })();
+
+
