@@ -14,8 +14,8 @@ import userM from './models/userM.js';
 // DB initializer
 import errorHandler from './middleware/errorHandler.js';
 import { initTables } from './models/initializer.js';
+import { redisClient, pubClient, subClient } from './config/redis.js';
 import { createAdapter } from '@socket.io/redis-adapter';
-import { createClient } from 'redis';
 
 dotenv.config();
 import { Server } from 'socket.io';
@@ -23,12 +23,6 @@ import http from 'http';
 
 const app = express();
 const server = http.createServer(app);
-export let redisClient = createClient({ url: process.env.REDIS_URL || 'redis://localhost:6379' });
-redisClient.on('error', (err) => console.log('Redis Client Error', err));
-await redisClient.connect();
-
-const pubClient = redisClient.duplicate();
-const subClient = redisClient.duplicate();
 
 const io = new Server(server, {
   cors: { origin: process.env.SOCKET_CORS_ORIGIN || "*" }
