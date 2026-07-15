@@ -1,0 +1,55 @@
+[
+  {
+    "name": "General Election 2026",
+    "seatType": "National",
+    "status": "Active",
+    "endDateOffset": 30,
+    "allocations": [
+      { "userEmail": "ali@test.com", "constituencyCode": "N-001" },
+      { "userEmail": "omar@test.com", "constituencyCode": "N-001" },
+      { "userEmail": "sara@test.com", "constituencyCode": "N-012" },
+      { "userEmail": "hira@test.com", "constituencyCode": "N-014" },
+      { "userEmail": "bilal@test.com", "constituencyCode": "N-003" },
+      { "userEmail": "kamran@test.com", "constituencyCode": "N-012" },
+      { "userEmail": "fatima@test.com", "constituencyCode": "N-002" },
+      { "userEmail": "zainab@test.com", "constituencyCode": "N-001" },
+      { "userEmail": "ayesha@test.com", "constituencyCode": "N-002" },
+      { "userEmail": "sadia@test.com", "constituencyCode": "N-013" },
+      { "userEmail": "hassan@test.com", "constituencyCode": "N-028" },
+      { "userEmail": "nadia@test.com", "constituencyCode": "N-022" },
+      { "userEmail": "asif@test.com", "constituencyCode": "N-025" },
+      { "userEmail": "ahmed@test.com", "constituencyCode": "N-013" },
+      { "userEmail": "junaid@test.com", "constituencyCode": "N-015" }
+    ]
+  },
+  {
+    "name": "Provincial Election Sindh 2026",
+    "seatType": "Provincial",
+    "province": "Sindh",
+    "status": "Active",
+    "endDateOffset": 30,
+    "allocations": [
+      { "userEmail": "ali@test.com", "constituencyCode": "NA-247" },
+      { "userEmail": "fatima@test.com", "constituencyCode": "NA-247" },
+      { "userEmail": "bilal@test.com", "constituencyCode": "NA-247" }
+    ]
+  },
+  {
+    "name": "General Election 2025",
+    "seatType": "National",
+    "status": "Ended",
+    "finalized": true,
+    "startDateOffset": -60,
+    "endDateOffset": -30,
+    "allocations": [
+      { "userEmail": "ali@test.com", "constituencyCode": "N-001" },
+      { "userEmail": "sara@test.com", "constituencyCode": "N-012" },
+      { "userEmail": "bilal@test.com", "constituencyCode": "N-003" },
+      { "userEmail": "hira@test.com", "constituencyCode": "N-014" },
+      { "userEmail": "omar@test.com", "constituencyCode": "N-001" },
+      { "userEmail": "kamran@test.com", "constituencyCode": "N-012" },
+      { "userEmail": "zainab@test.com", "constituencyCode": "N-001" },
+      { "userEmail": "fatima@test.com", "constituencyCode": "N-002" }
+    ]
+  }
+]

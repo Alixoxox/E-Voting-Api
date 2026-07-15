@@ -1,0 +1,18 @@
+[
+  { "userEmail": "ali@test.com", "partyAbbr": "PTI", "imageUrl": "pti-ali.jpg", "manifesto": "Economic reform and justice" },
+  { "userEmail": "sara@test.com", "partyAbbr": "PML-N", "imageUrl": "pmln-sara.jpg", "manifesto": "Development and progress" },
+  { "userEmail": "bilal@test.com", "partyAbbr": "PPP", "imageUrl": "ppp-bilal.jpg", "manifesto": "People first" },
+  { "userEmail": "zainab@test.com", "partyAbbr": "PTI", "imageUrl": "pti-zainab.jpg", "manifesto": "Change for the better" },
+  { "userEmail": "fatima@test.com", "partyAbbr": "PPP", "imageUrl": "ppp-fatima.jpg", "manifesto": "Rights for all" },
+  { "userEmail": "ahmed@test.com", "partyAbbr": "PML-N", "imageUrl": "pmln-ahmed.jpg", "manifesto": "Strong economy" },
+  { "userEmail": "ayesha@test.com", "partyAbbr": "MQM-P", "imageUrl": "mqm-ayesha.jpg", "manifesto": "Urban development" },
+  { "userEmail": "hassan@test.com", "partyAbbr": "ANP", "imageUrl": "anp-hassan.jpg", "manifesto": "Peace and education" },
+  { "userEmail": "omar@test.com", "partyAbbr": "PTI", "imageUrl": "pti-omar.jpg", "manifesto": "Anti-corruption" },
+  { "userEmail": "hira@test.com", "partyAbbr": "PML-N", "imageUrl": "pmln-hira.jpg", "manifesto": "Women empowerment" },
+  { "userEmail": "kamran@test.com", "partyAbbr": "PPP", "imageUrl": "ppp-kamran.jpg", "manifesto": "Jobs and industry" },
+  { "userEmail": "sadia@test.com", "partyAbbr": "MQM-P", "imageUrl": "mqm-sadia.jpg", "manifesto": "Municipal services" },
+  { "userEmail": "taimur@test.com", "partyAbbr": "ANP", "imageUrl": "anp-taimur.jpg", "manifesto": "Provincial autonomy" },
+  { "userEmail": "nadia@test.com", "partyAbbr": "PPP", "imageUrl": "ppp-nadia.jpg", "manifesto": "Balochistan development" },
+  { "userEmail": "asif@test.com", "partyAbbr": "PTI", "imageUrl": "pti-asif.jpg", "manifesto": "Maritime economy" },
+  { "userEmail": "junaid@test.com", "partyAbbr": "PML-N", "imageUrl": "pmln-junaid.jpg", "manifesto": "Agriculture reform" }
+]

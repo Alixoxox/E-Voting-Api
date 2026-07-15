@@ -102,20 +102,8 @@ export async function runDailyElectionCheck() {
   console.log('🌅 Running daily election result check...');
 
   try {
-    // 1. Get elections that have ended (date passed) or are being manually ended
-    const { rows: endedElections } = await db.query(`
-      SELECT id FROM elections
-      WHERE (end_date <= NOW() AND status = 'Active') 
-         OR (status = 'Active' AND id IN (SELECT id FROM elections WHERE status = 'Ended'))
-    `);
-
-    // Note: The manual trigger in adminC sets status to 'Ended' before calling this, 
-    // so we just need to process 'Active' ones that timed out, OR handle the logic manually.
-    // However, usually manual end sets end_date to NOW().
-
-    // Let's check for any Active election that SHOULD be ended.
     const { rows: processableElections } = await db.query(`
-        SELECT id FROM elections WHERE end_date <= NOW() AND status = 'Active'
+      SELECT id FROM elections WHERE end_date <= NOW() AND status = 'Active'
     `);
 
     for (const election of processableElections) {

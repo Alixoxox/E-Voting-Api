@@ -28,6 +28,7 @@ const io = new Server(server, {
   cors: { origin: process.env.SOCKET_CORS_ORIGIN || "*" }
 });
 export { io };
+export {redisClient};
 io.adapter(createAdapter(pubClient, subClient));
 
 app.use(cors());
@@ -40,19 +41,19 @@ app.use(express.text({ type: 'text/csv' }));
 const swaggerSpec = swaggerJsdoc(swaggerOptions);
 
 (async () => {
-  // 1ï¸âƒ£ Initialize DB tables
+  // Initialize DB tables
   await initTables();
 
-  // 2ï¸âƒ£ Swagger UI route (add BEFORE your API routes)
+  // Swagger UI route (add BEFORE your API routes)
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
-  // 3ï¸âƒ£ Register all API routes
+  // Register all API routes
   app.use('/api/public',publicRoutes );
   app.use('/api/users', userRoutes);
   app.use('/api/parties', partyRoutes);
   app.use('/api/admin',AdminRoutes);
   app.use(errorHandler);
-  // 4ï¸âƒ£ Start server
+  // Start server
   io.on("connection", (socket) => {
     console.log(" User connected:", socket.id);
   
@@ -87,7 +88,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
   });
   server.listen(5000, () => {
     console.log(`  Server running on port 5000`);
-    console.log(`ðŸ“š Swagger docs: http://localhost:5000/api-docs`);
+    console.log(` Swagger docs: http://localhost:5000/api-docs`);
   });
   
 })();
