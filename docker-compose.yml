@@ -1,6 +1,6 @@
 services:
   backend:
-    build: .
+    build: 960828422057.dkr.ecr.us-east-1.amazonaws.com/e-voting-api:latest
     container_name: evoting-api
     env_file:
       - .env
