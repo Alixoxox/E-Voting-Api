@@ -4,7 +4,7 @@ import { fileURLToPath } from 'url';
 import csv from 'csv-parser';
 import pool from '../config/db.js';
 import bcrypt from 'bcrypt';
-
+import { initTables } from '../models/initializer.js';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const DATA = path.join(__dirname, '..', 'demoData');
@@ -26,12 +26,14 @@ function readJSON(file) {
 }
 
 async function insertProvinces(rows) {
+  rows = rows.filter(r => r.name);
   for (const r of rows) {
     await pool.query('INSERT INTO province (name) VALUES ($1) ON CONFLICT DO NOTHING', [r.name.trim()]);
   }
 }
 
 async function insertCities(rows) {
+  rows = rows.filter(r => r.name && r.province);
   const provs = await pool.query('SELECT id, LOWER(name) AS name FROM province');
   const pMap = Object.fromEntries(provs.rows.map(p => [p.name, p.id]));
   for (const r of rows) {
@@ -41,6 +43,7 @@ async function insertCities(rows) {
 }
 
 async function insertAreas(rows) {
+  rows = rows.filter(r => r.name && r.city);
   const cities = await pool.query('SELECT id, LOWER(name) AS name FROM city');
   const cMap = Object.fromEntries(cities.rows.map(c => [c.name, c.id]));
   for (const r of rows) {
@@ -52,12 +55,12 @@ async function insertAreas(rows) {
 async function insertParties(rows) {
   for (const r of rows) {
     await pool.query(
-      `INSERT INTO party (name, abbreviation, logo, email, password, "approvalStatus")
+      `INSERT INTO party (name, abbreviation, logo, email, password, "approvalstatus")
        VALUES ($1,$2,$3,$4,$5,'Approved') ON CONFLICT (abbreviation) DO NOTHING`,
       [r.name, r.abbreviation, r.logo, r.email, await bcrypt.hash(r.password, 10)]
     );
   }
-  await pool.query('UPDATE party SET "approvalStatus" = \'Approved\'');
+  await pool.query('UPDATE party SET "approvalstatus" = \'Approved\'');
 }
 
 async function insertUsers(rows) {
@@ -168,7 +171,7 @@ async function insertElections(elections) {
       const totalVotes = e.status === 'Ended' ? Math.floor(Math.random() * 100) : 0;
       const approvalStatus = e.status === 'Ended' ? (Math.random() > 0.5 ? 'Won' : 'Lost') : 'Pending';
       await pool.query(
-        `INSERT INTO candidateConstituency (candidateId, electionId, constituencyId, totalVotes, approvalStatus)
+        `INSERT INTO candidateConstituency (candidateId, electionId, constituencyId, totalVotes, approvalstatus)
          VALUES ($1,$2,$3,$4,$5) ON CONFLICT DO NOTHING`,
         [candId, electionId, constId, totalVotes, approvalStatus]
       );
@@ -193,7 +196,7 @@ async function insertElections(elections) {
   }
 }
 
-async function seed() {
+export async function seed() {
   console.log('Seeding provinces...');
   await insertProvinces(await readCSV('Provinces.csv'));
   console.log('Seeding cities...');
@@ -228,8 +231,3 @@ async function seed() {
   }
 }
 
-(async () => {
-  await seed();
-  await pool.end();
-  console.log('\nDone. Run `npm start` to launch.\n');
-})();

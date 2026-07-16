@@ -12,7 +12,7 @@ class partyM{
             logo VARCHAR(255),    
             email VARCHAR(255) NOT NULL UNIQUE,
             password VARCHAR(255) NOT NULL,
-            approvalStatus VARCHAR(20) CHECK (approvalStatus IN ('Pending', 'Rejected', 'Approved')) DEFAULT 'Pending',
+            approvalstatus VARCHAR(20) CHECK (approvalstatus IN ('Pending', 'Rejected', 'Approved')) DEFAULT 'Pending',
             UNIQUE(name, abbreviation,email));`
             await db.query(sql);
             console.log('party table created or already exists.');
@@ -46,7 +46,7 @@ class partyM{
           }
       
           const sql = `
-            INSERT INTO party (name, abbreviation, logo,email,password,approvalStatus)
+            INSERT INTO party (name, abbreviation, logo,email,password,approvalstatus)
             VALUES ${rows.join(', ')};
           `;
           await client.query(sql, values);
@@ -73,7 +73,7 @@ class partyM{
       }}
       // 2. Mark as Approved (Used after OTP verification)
       async markVerified(id) {
-        await db.query(`UPDATE party SET approvalStatus = 'Approved' WHERE id = $1`, [id]);
+        await db.query(`UPDATE party SET approvalstatus = 'Approved' WHERE id = $1`, [id]);
       }
       async LoginParty(email, password){
         try {

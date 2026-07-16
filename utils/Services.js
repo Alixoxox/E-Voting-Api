@@ -138,8 +138,8 @@ export async function runDailyElectionCheck() {
       // 5. Update Losers
       await db.query(`
         UPDATE candidateconstituency
-        SET approvalStatus = 'Lost'
-        WHERE electionid = $1 AND approvalStatus IS DISTINCT FROM 'Won'
+        SET approvalstatus = 'Lost'
+        WHERE electionid = $1 AND approvalstatus IS DISTINCT FROM 'Won'
       `, [electionId]);
 
       // 6. Close Election

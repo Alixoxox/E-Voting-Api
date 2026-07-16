@@ -102,7 +102,7 @@ class Parties {
   async RejectPartyRegistration(req, res) {
     try {
       const { partyId } = req.params;
-      await pool.query(`UPDATE party SET approvalStatus = 'Rejected' WHERE id = $1`, [partyId]);
+      await pool.query(`UPDATE party SET approvalstatus = 'Rejected' WHERE id = $1`, [partyId]);
       auditLogsM.logAction(req,'PARTY_REGISTRATION_REJECTED',`Party_${partyId}`,{status: 'Success'});
       return res.json({ message: "Party registration rejected successfully" });
     } catch (err) {

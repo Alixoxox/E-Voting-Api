@@ -20,6 +20,8 @@ import { createAdapter } from '@socket.io/redis-adapter';
 dotenv.config();
 import { Server } from 'socket.io';
 import http from 'http';
+import { seed } from './utils/seed.js';
+import pool from './config/db.js';
 
 const app = express();
 const server = http.createServer(app);
@@ -43,8 +45,8 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
 (async () => {
   // Initialize DB tables
   await initTables();
-
-  // Swagger UI route (add BEFORE your API routes)
+  await seed();
+  // Swagger UI route
   app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
   // Register all API routes
@@ -76,7 +78,7 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
         }
         // Emit directly to this user (not broadcast)
         socket.emit("leaderboardUpdate", { leaderboard });
-        console.log(`ðŸ“¤ Sent initial leaderboard to ${socket.id}`);
+        console.log(`📤 Sent initial leaderboard to ${socket.id}`);
       } catch (err) {
         console.error("Error fetching leaderboard:", err.message);
       }
@@ -92,5 +94,6 @@ const swaggerSpec = swaggerJsdoc(swaggerOptions);
   });
   
 })();
+
 
 

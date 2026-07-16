@@ -7,7 +7,7 @@ class candConstM {
             id SERIAL PRIMARY KEY,
             candidateId INTEGER REFERENCES candidate(id),
             totalVotes INTEGER DEFAULT 0,
-            approvalStatus VARCHAR(20) CHECK (approvalStatus IN ('Pending', 'Won' , 'Lost')) DEFAULT 'Pending',
+            approvalstatus VARCHAR(20) CHECK (approvalstatus IN ('Pending', 'Won' , 'Lost')) DEFAULT 'Pending',
             constituencyId INTEGER REFERENCES Constituency(id),
             electionId INTEGER REFERENCES elections(id),
             UNIQUE(candidateId, constituencyId,electionId));
