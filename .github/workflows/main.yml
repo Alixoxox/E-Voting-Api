@@ -46,8 +46,8 @@ jobs:
 
       - name: Build and push image
         run: |
-          docker build -t ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY }}:latest .
-          docker push ${{ vars.ECR_REGISTRY }}/${{ vars.ECR_REPOSITORY }}:latest
+          docker build -t ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest .
+          docker push ${{ secrets.ECR_REGISTRY }}/${{ secrets.ECR_REPOSITORY }}:latest
 
       - name: Deploy to EC2
         uses: appleboy/ssh-action@v1.2.0
@@ -56,7 +56,7 @@ jobs:
           username: ${{ secrets.EC2_USERNAME }}
           key: ${{ secrets.EC2_SSH_KEY }}
           script: |
-            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ vars.ECR_REGISTRY }}
+            aws ecr get-login-password --region ${{ secrets.AWS_REGION }} | docker login --username AWS --password-stdin ${{ secrets.ECR_REGISTRY }}
             cd ~/E-Voting-Api
             docker compose pull
             docker compose up -d
