@@ -66,28 +66,10 @@ utils/                 Seeding, CSV parsing, Cloudinary, email, seat resolution 
 demoData/              Seed sources (CSV + JSON)
 ```
 
-## Data model
+## Database Schema
 
-Twelve tables are created at startup in dependency order, with foreign keys mirroring the real-world hierarchy:
+<img width="1168" height="752" alt="image" src="https://github.com/user-attachments/assets/cf53fb7b-b592-41f1-86ce-8717ae101805" />
 
-```
-province ──▶ city ──▶ area            constituency ──┬── constituency_area
-  ▲          ▲         ▲                  ▲          │      ▲
-  │          │         │                  │          └──────┘
-  │          │         └──────────┐       │
-  │          └──────┐             │       │
-  │                 ▼             ▼       │
-  │              users            │       │
-  │                 ▲             │       │
-  │                 │ userId      │       │
-  party ─────────▶ candidate ────▶ candidateConstituency
-                        ▲               │ totalVotes
-                        │               │
-  elections ───────────┴───────────────┘
-      ▲
-      │
-  votes (user, candidateConstituency, election, hash chain)
-```
 
 | Table | Responsibility |
 |---|---|
